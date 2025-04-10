@@ -1,0 +1,46 @@
+<header>
+  <section class="filter-box">
+    <input id="filter" type="search" [(ngModel)]="filter" placeholder="Filter">
+  </section>
+
+  <app-paginator (start)="paginatorStart.set($event)"
+                 (limit)="paginatorLimit.set($event)"
+                 [reset]="filterText()" />
+</header>
+
+<table>
+  <thead>
+  <tr>
+    <th>No.</th>
+    <th>Completed</th>
+    <th>Title</th>
+    <th>User</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+
+  <tbody>
+    @let todoList = todos();
+
+    @for (todo of todoList; track todo.id; let i = $index) {
+      <tr>
+        <td>{{ paginatorStart() + i + 1 }}</td>
+        <td>{{ todo.completed ? 'Yes' : 'No' }}</td>
+        <td>{{ todo.title }}</td>
+        <td>{{ todo.userId === 1 ? 'Admin' : 'Operator' }}</td>
+        <td><a [routerLink]="['/', 'todo', 'edit', todo.id]">Edit</a></td>
+      </tr>
+    }
+
+    @if (isLoading()) {
+      <tr>
+        <td colspan="5">Loading...</td>
+      </tr>
+    } @else if (!todoList.length) {
+      <tr>
+        <td colspan="5">No results</td>
+      </tr>
+    }
+  </tbody>
+</table>
+

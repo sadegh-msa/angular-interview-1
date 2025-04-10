@@ -1,0 +1,31 @@
+<header>
+  <button type="submit" form="todo-form" [disabled]="isLoading() || isSaving() || form.invalid">
+    <span>Save</span>
+  </button>
+
+  @if (isLoading()) {
+    Loading...
+  } @else if (isSaving()) {
+    Saving ...
+  }
+</header>
+
+<form id="todo-form" [formGroup]="form" (submit)="save()">
+  <fieldset>
+    <label>Completed</label>
+    <select formControlName="completed">
+      <option [value]="true">Yes</option>
+      <option [value]="false">No</option>
+    </select>
+  </fieldset>
+
+  <fieldset>
+    <label>Title</label>
+    <input type="text" formControlName="title" placeholder="Title"/>
+    @let titleField = form.get('title');
+
+    @if (titleField?.dirty && titleField?.hasError('required')) {
+      <span class="error">This field is required.</span>
+    }
+  </fieldset>
+</form>

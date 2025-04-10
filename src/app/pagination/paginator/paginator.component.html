@@ -1,0 +1,19 @@
+
+@if (paginator) {
+  <select [ngModel]="paginator.limit()" (ngModelChange)="setPageSize($event)">
+    <option [value]="10">10</option>
+    <option [value]="25">25</option>
+    <option [value]="50">50</option>
+    <option [value]="100">100</option>
+  </select>
+
+  <button (click)="previousPage()" [disabled]="paginator.start() === 0">
+    <span>Previous</span>
+  </button>
+
+  <span>page {{ paginator.start() / paginator.limit() + 1 }}</span>
+
+  <button (click)="nextPage()">
+    <span>Next</span>
+  </button>
+}
