@@ -26,6 +26,10 @@ export class TodoRestService {
   }
 
   async list({ limit, start, filter } = { limit: 10, start: 0 } as ListParams) {
+    if (!limit) {
+      return new Array<Todo>();
+    }
+
     let url = this.#createUrl(`?_limit=${limit}&_start=${start}`);
 
     if (filter?.length) {

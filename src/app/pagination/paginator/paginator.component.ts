@@ -31,8 +31,13 @@ export class PaginatorComponent {
     });
 
     effect(() => {
-      this.reset();
-      untracked(() => this.#paginationService.reset());
+      const reset = this.reset();
+
+      untracked(() => {
+        if (reset !== undefined) {
+          this.#paginationService.reset();
+        }
+      });
     });
   }
 

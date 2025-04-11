@@ -1,20 +1,21 @@
 import { effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, type Params, Router } from '@angular/router';
 import type { Paginator } from './paginator';
 
 @Injectable()
 export class PaginationService {
-  readonly #start = signal(0);
-  readonly #limit = signal(10);
-  readonly #onChange = signal(this.paginator);
+  readonly #activatedRoute = inject(ActivatedRoute);
+  readonly #router = inject(Router);
+
+  readonly #START = 0;
+  readonly #LIMIT = 10;
+
+  readonly #start = signal(this.#START);
+  readonly #limit = signal(this.#LIMIT);
 
   set limit(limit: number) {
     this.#limit.set(limit);
-  }
-
-  get onChange() {
-    return this.#onChange.asReadonly();
   }
 
   get paginator() {
@@ -25,14 +26,34 @@ export class PaginationService {
   }
 
   constructor() {
+    this.#activatedRoute.queryParams
+      .pipe(takeUntilDestroyed())
+      .subscribe(({ start, limit }) => {
+        this.#start.set(!isNaN(+start) ? +start : this.#START);
+        this.#limit.set(!isNaN(+limit) ? +limit : this.#LIMIT);
+      });
+
     effect(() => {
       this.#limit();
       this.#start();
 
       untracked(() => {
-        this.#onChange.set(this.paginator);
+        this.#updateCurrentRoute();
       });
     });
+  }
+
+  #updateCurrentRoute() {
+    const queryParams: Params = { start: this.#start(), limit: this.#limit() };
+    this.#router.navigate(
+      [],
+      {
+        relativeTo: this.#activatedRoute,
+        queryParams,
+        queryParamsHandling: 'merge',
+        onSameUrlNavigation: 'ignore',
+      }
+    ).then();
   }
 
   #paginate(direction: -1 | 1) {
@@ -41,7 +62,7 @@ export class PaginationService {
   }
 
   reset() {
-    this.#start.set(0);
+    this.#start.set(this.#START);
   }
 
   nextPage() {
