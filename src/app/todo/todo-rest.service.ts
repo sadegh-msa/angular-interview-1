@@ -11,7 +11,7 @@ export class TodoRestService {
 
   readonly #URL = 'https://jsonplaceholder.typicode.com/todos';
 
-  #createUrl(path = '') {
+  #createUrl(path?: string | number | boolean) {
     return this.#restService.createUrl(this.#URL, path);
   }
 
@@ -20,9 +20,9 @@ export class TodoRestService {
       return;
     }
 
-    const url = this.#createUrl(`/${id}`);
+    const url = this.#createUrl(id);
 
-    return this.#restService.request<Todo[]>(url);
+    return this.#restService.get<Todo>(url);
   }
 
   async list({ limit, start, filter } = { limit: 10, start: 0 } as ListParams) {
@@ -36,17 +36,18 @@ export class TodoRestService {
       url += `&q=${filter}`;
     }
 
-    return this.#restService.request<Todo[]>(url);
+    return this.#restService.get<Todo[]>(url);
   }
 
   async add(todo: Todo) {
     const url = this.#createUrl();
-    return this.#restService.request<Todo[]>(url, 'POST', todo);
+    console.log(url);
+    return this.#restService.post<Todo>(url, todo);
   }
 
   async update(todo: Todo) {
-    const url = this.#createUrl(`/${todo.id}`);
-    return this.#restService.request<Todo[]>(url, 'PATCH', todo);
+    const url = this.#createUrl(todo.id);
+    return this.#restService.patch<Todo>(url, todo);
   }
 
   save(todo: Todo) {
@@ -62,7 +63,7 @@ export class TodoRestService {
       return;
     }
 
-    const url = this.#createUrl(`/${id}`);
-    return this.#restService.request<unknown>(url);
+    const url = this.#createUrl(id);
+    return this.#restService.delete(url);
   }
 }
