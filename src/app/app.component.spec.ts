@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [provideRouter([], withComponentInputBinding())]
     }).compileComponents();
   });
 
@@ -14,16 +16,21 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'angular-interview-1' title`, () => {
+  it('should have a router outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('angular-interview-1');
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('router-outlet')).not.toBeNull();
   });
 
-  it('should render title', () => {
+  it('should have a nav element', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, angular-interview-1');
+    expect(compiled.querySelector('nav')).not.toBeNull();
+  });
+
+  it('should have a main element', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('main')).not.toBeNull();
   });
 });

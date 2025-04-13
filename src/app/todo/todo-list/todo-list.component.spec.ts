@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { TodoListComponent } from './todo-list.component';
 
@@ -8,7 +9,8 @@ describe('TodoListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TodoListComponent]
+      imports: [TodoListComponent],
+      providers: [provideRouter([], withComponentInputBinding())]
     })
     .compileComponents();
 
